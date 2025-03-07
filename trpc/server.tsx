@@ -6,7 +6,7 @@ import { makeQueryClient } from "./query-client";
 import { appRouter } from "./routers/_app";
 
 export const getQueryClient = cache(makeQueryClient);
-export const api = createTRPCOptionsProxy({
+export const trpc = createTRPCOptionsProxy({
   ctx: createTRPCContext,
   router: appRouter,
   queryClient: getQueryClient,

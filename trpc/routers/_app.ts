@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "../init";
+import { authRouter } from "./auth";
 
 export const appRouter = createTRPCRouter({
   hello: baseProcedure
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
         greeting: `hello ${opts.input.text}`,
       };
     }),
+  auth: authRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;

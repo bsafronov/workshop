@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
+import { Toaster } from "@/components/ui/sonner";
 
 const font = Inter();
 
@@ -18,7 +19,10 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`${font.className} antialiased`}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <Toaster richColors />
+          {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );

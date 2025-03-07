@@ -1,12 +1,5 @@
 import { InferSelectModel, sql } from "drizzle-orm";
-import {
-  boolean,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const id = uuid("id")
   .primaryKey()
@@ -17,9 +10,15 @@ export const createdAt = timestamp("created_at", { mode: "date" })
   .defaultNow();
 export const updatedAt = timestamp("updated_at", { mode: "date" });
 
+export const createdBy = uuid("created_by")
+  .notNull()
+  .references(() => usersTable.id);
+export const updatedBy = uuid("updated_by").references(() => usersTable.id);
+
 export const usersTable = pgTable("users", {
   id,
   username: varchar("username").notNull().unique(),
+  password: varchar("hash_password").notNull(),
   createdAt,
   updatedAt,
 });

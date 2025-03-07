@@ -8,6 +8,7 @@ import { useState } from "react";
 import { makeQueryClient } from "./query-client";
 import type { AppRouter } from "./routers/_app";
 import SuperJSON from "superjson";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
 let browserQueryClient: QueryClient;
@@ -54,6 +55,7 @@ export function TRPCReactProvider(
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+        <ReactQueryDevtools />
         {props.children}
       </TRPCProvider>
     </QueryClientProvider>
