@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { baseProcedure, createTRPCRouter } from "../init";
 
 export const authRouter = createTRPCRouter({
-  me: baseProcedure.query(({ ctx }) => ctx.session),
+  me: baseProcedure.query(({ ctx }) => ctx.user),
   register: baseProcedure
     .input(userInsertSchema)
     .mutation(async ({ input, ctx }) => {

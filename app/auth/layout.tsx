@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react";
 export default async function Layout({ children }: PropsWithChildren) {
   const qc = getQueryClient();
 
-  const { user } = await qc.fetchQuery(trpc.auth.me.queryOptions());
+  const user = await qc.fetchQuery(trpc.auth.me.queryOptions());
 
   if (user) {
     redirect("/");

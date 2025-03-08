@@ -1,9 +1,20 @@
 import { cn } from "@/lib/utils";
-import { Send } from "lucide-react";
 import { ComponentProps } from "react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
+import { Edit, FilePlus } from "lucide-react";
+
+const submitTypeMap = {
+  create: {
+    label: "Создать",
+    icon: FilePlus,
+  },
+  edit: {
+    label: "Изменить",
+    icon: Edit,
+  },
+};
 
 type FormControllerProps<
   TFieldValues extends FieldValues,
@@ -12,7 +23,7 @@ type FormControllerProps<
 > = {
   form: UseFormReturn<TFieldValues, TContext, TTransformedValues>;
 } & ComponentProps<"form"> & {
-    submitText?: string;
+    type?: keyof typeof submitTypeMap;
     isLoading?: boolean;
   };
 
@@ -24,19 +35,19 @@ export const FormController = <
   form,
   className,
   children,
-  submitText = "Сохранить",
+  type = "create",
   isLoading,
   ...props
 }: FormControllerProps<TFieldValues, TContext, TTransformedValues>) => {
+  const { icon: Icon, label } = submitTypeMap[type];
   return (
     <Form {...form}>
       <form className={cn("space-y-8 grid", className)} {...props}>
         {children}
-        {submitText && (
-          <Button isLoading={isLoading} className="justify-self-end">
-            <Send /> {submitText}
-          </Button>
-        )}
+
+        <Button isLoading={isLoading} className="justify-self-end">
+          {!isLoading && <Icon />} {label}
+        </Button>
       </form>
     </Form>
   );

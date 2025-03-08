@@ -20,7 +20,7 @@ import { PropsWithChildren } from "react";
 
 export default async function Layout({ children }: PropsWithChildren) {
   const qc = getQueryClient();
-  const { user } = await qc.fetchQuery(trpc.auth.me.queryOptions());
+  const user = await qc.fetchQuery(trpc.auth.me.queryOptions());
 
   if (!user) {
     redirect("/auth/login");
@@ -48,7 +48,7 @@ export default async function Layout({ children }: PropsWithChildren) {
         </SidebarContent>
         <SidebarFooter></SidebarFooter>
       </Sidebar>
-      <main className="p-4 min-h-screen space-y-4">
+      <main className="p-4 min-h-screen space-y-4 grow">
         <div className="flex items-center gap-2">
           <SidebarTrigger />
           <Breadcrumbs />

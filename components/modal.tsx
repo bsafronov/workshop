@@ -7,17 +7,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import { createContext, useContext } from "react";
 
 type Props = {
   title: string;
   description?: string;
-  children?: ((toggle: () => void) => React.ReactNode) | React.ReactNode;
+  children?: React.ReactNode;
   trigger?: (toggle: () => void) => React.ReactNode;
   open?: boolean;
 };
 
-export type ModalProps = {
-  trigger?: (toggle: () => void) => React.ReactNode;
+const ModalContext = createContext<ReturnType<typeof useBoolean> | null>(null);
+export const useModal = () => {
+  const ctx = useContext(ModalContext);
+  if (!ctx) {
+    throw new Error("useModal must be used within a <Modal />");
+  }
+
+  return ctx;
 };
 
 export const Modal = ({
@@ -27,22 +34,27 @@ export const Modal = ({
   description,
   open,
 }: Props) => {
-  const { value, toggle } = useBoolean(open);
+  const isOpen = useBoolean(open);
 
   return (
-    <Dialog open={value} onOpenChange={toggle}>
+    <Dialog open={isOpen.value} onOpenChange={isOpen.toggle}>
       {trigger && (
-        <DialogTrigger asChild onClick={toggle}>
-          {trigger?.(toggle)}
+        <DialogTrigger asChild onClick={isOpen.toggle}>
+          {trigger?.(isOpen.toggle)}
         </DialogTrigger>
       )}
-      <DialogContent className="p-0 overflow-hidden gap-0">
+      <DialogContent
+        className="p-0 overflow-hidden gap-0"
+        aria-describedby={undefined}
+      >
         <DialogHeader className="p-6 bg-accent border-b grid place-items-center">
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <div className="p-6">
-          {typeof children === "function" ? children(toggle) : children}
+          <ModalContext.Provider value={isOpen}>
+            {children}
+          </ModalContext.Provider>
         </div>
       </DialogContent>
     </Dialog>

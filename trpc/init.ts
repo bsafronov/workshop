@@ -25,7 +25,8 @@ export const createTRPCContext = cache(async () => {
   }
 
   return {
-    session,
+    user: session.user,
+    session: session.session,
     db,
     cookieStore,
   };
@@ -39,6 +40,7 @@ export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure.use(async ({ ctx, next }) => {
   const isDev = process.env.NODE_ENV === "development";
+  console.log({ ctx });
 
   if (isDev) {
     await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
@@ -48,12 +50,18 @@ export const baseProcedure = t.procedure.use(async ({ ctx, next }) => {
 });
 
 export const authProcedure = baseProcedure.use(({ ctx, next }) => {
-  if (!ctx.session.user) {
+  const { session, user, db, cookieStore } = ctx;
+  if (!session || !user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
-    ctx,
+    ctx: {
+      cookieStore,
+      db,
+      session,
+      user,
+    },
   });
 });
 
