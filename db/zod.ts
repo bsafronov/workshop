@@ -1,5 +1,25 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { usersTable } from "./schema";
+import { util } from "zod";
+import { tablesTable, usersTable } from "./schema";
+
+type OmitKeys =
+  | "id"
+  | "createdAt"
+  | "updatedAt"
+  | "updatedById"
+  | "createdById";
+
+type OmitRecord = {
+  [key in OmitKeys]?: true;
+};
+
+const insertOmit: util.Exactly<OmitRecord, unknown> = {
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  updatedById: true,
+  createdById: true,
+};
 
 export const userSelectSchema = createSelectSchema(usersTable);
 export const userInsertSchema = createInsertSchema(usersTable, {
@@ -11,3 +31,6 @@ export const userInsertSchema = createInsertSchema(usersTable, {
   createdAt: true,
   updatedAt: true,
 });
+
+export const tableInsertSchema =
+  createInsertSchema(tablesTable).omit(insertOmit);
