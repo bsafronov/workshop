@@ -15,6 +15,20 @@
       "when": 1741371213188,
       "tag": "0001_overrated_mercury",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741437604161,
+      "tag": "0002_mute_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1741437625449,
+      "tag": "0003_absent_squadron_supreme",
+      "breakpoints": true
     }
   ]
 }

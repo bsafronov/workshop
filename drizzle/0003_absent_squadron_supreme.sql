@@ -1,0 +1,1 @@
+CREATE TYPE "public"."column_type" AS ENUM('string', 'number', 'boolean', 'date');

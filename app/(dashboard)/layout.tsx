@@ -5,7 +5,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -33,14 +32,13 @@ export default async function Layout({ children }: PropsWithChildren) {
         <SidebarHeader>Workshop</SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Таблицы</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link href={"/tables"}>
                       <LucideTable2 />
-                      Мои таблицы
+                      Таблицы
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
