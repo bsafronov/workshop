@@ -1,19 +1,20 @@
-"use client";
+import { Loader } from "@/components/ui/loader";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+import { Suspense } from "react";
+import { TableInfo } from "./table-info";
 
-import {
-  useParams,
-  usePathname,
-  useSearchParams,
-  useSelectedLayoutSegment,
-} from "next/navigation";
+type Props = {
+  params: Promise<{ tableId: string }>;
+};
+export default async function Page({ params }: Props) {
+  const { tableId } = await params;
+  prefetch(trpc.table.getTable.queryOptions({ tableId }));
 
-export default function Page() {
-  const pathname = usePathname();
-  const params = useParams();
-  const searchParams = useSearchParams();
-  const segment = useSelectedLayoutSegment();
-
-  console.log({ params, pathname, searchParams, segment });
-
-  return <div>Page</div>;
+  return (
+    <HydrateClient>
+      <Suspense fallback={<Loader />}>
+        <TableInfo />
+      </Suspense>
+    </HydrateClient>
+  );
 }

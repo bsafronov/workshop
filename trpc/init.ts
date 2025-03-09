@@ -40,7 +40,6 @@ export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure.use(async ({ ctx, next }) => {
   const isDev = process.env.NODE_ENV === "development";
-  console.log({ ctx });
 
   if (isDev) {
     await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));

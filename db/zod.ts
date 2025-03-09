@@ -1,6 +1,6 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { util } from "zod";
-import { tablesTable, usersTable } from "./schema";
+import { columnsTable, tablesTable, usersTable } from "./schema";
 
 type OmitKeys =
   | "id"
@@ -34,3 +34,7 @@ export const userInsertSchema = createInsertSchema(usersTable, {
 
 export const tableInsertSchema =
   createInsertSchema(tablesTable).omit(insertOmit);
+
+export const columnInsertSchema = createInsertSchema(columnsTable, {
+  name: (s) => s.nonempty("Обязательное поле"),
+}).omit(insertOmit);

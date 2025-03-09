@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
 import { Toaster } from "@/components/ui/sonner";
+import "./globals.css";
 
-const font = Inter();
+const font = Inter({
+  subsets: ["cyrillic", "latin"],
+});
 
 export const metadata: Metadata = {
   title: "Workshop",

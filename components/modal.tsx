@@ -1,3 +1,6 @@
+"use client";
+
+import { createContext, useContext } from "react";
 import { useBoolean } from "usehooks-ts";
 import {
   Dialog,
@@ -7,13 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { createContext, useContext } from "react";
 
 type Props = {
   title: string;
   description?: string;
   children?: React.ReactNode;
-  trigger?: (toggle: () => void) => React.ReactNode;
+  trigger?: React.ReactNode;
   open?: boolean;
 };
 
@@ -37,26 +39,22 @@ export const Modal = ({
   const isOpen = useBoolean(open);
 
   return (
-    <Dialog open={isOpen.value} onOpenChange={isOpen.toggle}>
-      {trigger && (
-        <DialogTrigger asChild onClick={isOpen.toggle}>
-          {trigger?.(isOpen.toggle)}
-        </DialogTrigger>
-      )}
-      <DialogContent
-        className="p-0 overflow-hidden gap-0"
-        aria-describedby={undefined}
-      >
-        <DialogHeader className="p-6 bg-accent border-b grid place-items-center">
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
-        </DialogHeader>
-        <div className="p-6">
-          <ModalContext.Provider value={isOpen}>
-            {children}
-          </ModalContext.Provider>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <ModalContext.Provider value={isOpen}>
+      <Dialog open={isOpen.value} onOpenChange={isOpen.toggle}>
+        {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+        <DialogContent
+          className="p-0 overflow-hidden gap-0"
+          aria-describedby={undefined}
+        >
+          <DialogHeader className="p-6 bg-accent border-b grid place-items-center">
+            <DialogTitle>{title}</DialogTitle>
+            {description && (
+              <DialogDescription>{description}</DialogDescription>
+            )}
+          </DialogHeader>
+          <div className="p-6">{children}</div>
+        </DialogContent>
+      </Dialog>
+    </ModalContext.Provider>
   );
 };
