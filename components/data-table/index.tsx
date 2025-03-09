@@ -1,8 +1,9 @@
 "use client";
 
 import { ColumnType } from "@/const/column-type";
-import { Column, Row } from "@/db/schema";
+import { Column } from "@/db/schema";
 import { useTRPC } from "@/trpc/client";
+import { RouterOutputs } from "@/trpc/init";
 import { useQuery } from "@tanstack/react-query";
 import {
   ColumnDef,
@@ -11,6 +12,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Check } from "lucide-react";
 import { useMemo } from "react";
 import {
   Table,
@@ -21,10 +23,9 @@ import {
   TableRow,
 } from "../ui/table";
 
-type ParsedRow = Pick<
-  Row,
-  "createdAt" | "updatedAt" | "createdById" | "updatedById" | "id"
-> & {
+type Row = RouterOutputs["table"]["getRows"][number];
+
+type ParsedRow = Omit<Row, "data"> & {
   [key: string]: unknown;
 };
 
@@ -59,13 +60,13 @@ const getColumns = (columns: Column[]) => {
     },
   });
 
-  const createdByIdColumn = helper.accessor("createdById", {
-    header: "ID создателя",
+  const createdByColumn = helper.accessor("createdBy.username", {
+    header: "Создал",
     cell: (ctx) => ctx.getValue(),
   });
 
-  const updatedByIdColumn = helper.accessor("updatedById", {
-    header: "ID обновителя",
+  const updatedByColumn = helper.accessor("updatedBy.username", {
+    header: "Изменил",
     cell: (ctx) => ctx.getValue(),
   });
 
@@ -73,8 +74,8 @@ const getColumns = (columns: Column[]) => {
     ...dynamicColumns,
     createdAtColumn,
     updatedAtColumn,
-    createdByIdColumn,
-    updatedByIdColumn,
+    createdByColumn,
+    updatedByColumn,
   ];
 };
 
@@ -84,7 +85,7 @@ const getCell = ({ value }: { type: ColumnType; value: unknown }) => {
     case "number":
       return value;
     case "boolean":
-      return value ? "Да" : "Нет";
+      return value ? <Check className="size-4" /> : null;
     case "object":
       if (value instanceof Date) {
         return value.toLocaleString();
@@ -95,14 +96,10 @@ const getCell = ({ value }: { type: ColumnType; value: unknown }) => {
 
 export const getData = (data: Row[]): ParsedRow[] => {
   return data.map((row) => {
-    const { createdAt, createdById, updatedAt, updatedById, id, data } = row;
+    const { data, ...rest } = row;
 
     return {
-      createdAt,
-      createdById,
-      updatedAt,
-      updatedById,
-      id,
+      ...rest,
       ...data,
     };
   });
@@ -128,9 +125,10 @@ export const DynamicDataTable = ({ tableId }: DynamicDataTableProps) => {
   }, [serverColumns]) as ColumnDef<ParsedRow>[];
 
   const data = useMemo(() => {
-    if (!serverData) return [];
+    if (!serverData || columns.length === 0) return [];
     return getData(serverData);
-  }, [serverData]);
+  }, [serverData, columns]);
+  console.log(data);
 
   return <DataTable data={data} columns={columns} />;
 };

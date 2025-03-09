@@ -1,5 +1,6 @@
 import { InferSelectModel, relations, sql } from "drizzle-orm";
 import {
+  boolean,
   jsonb,
   pgEnum,
   pgTable,
@@ -94,8 +95,9 @@ export const columnsTable = pgTable("columns", {
     .notNull()
     .references(() => tablesTable.id, { onDelete: "cascade" }),
   name: varchar("name").notNull(),
-  type: columnType("type"),
+  type: columnType("type").notNull().default("string"),
   meta: jsonb("meta").$type<Record<string, unknown>>(),
+  required: boolean("required").notNull().default(false),
 });
 
 export const columnsRelations = relations(columnsTable, ({ one }) => ({
@@ -120,7 +122,7 @@ export const rowsTable = pgTable("rows", {
   tableId: uuid("table_id")
     .notNull()
     .references(() => tablesTable.id, { onDelete: "cascade" }),
-  data: jsonb("data").$type<Record<string, unknown>>(),
+  data: jsonb("data").$type<Record<string, unknown>>().notNull(),
   meta: jsonb("meta").$type<Record<string, unknown>>(),
 });
 

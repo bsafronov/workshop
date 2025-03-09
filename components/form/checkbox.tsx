@@ -27,7 +27,7 @@ export const FormCheckbox: FormElement<typeof Checkbox> = ({
             <FormControl>
               <Checkbox
                 {...field}
-                checked={value}
+                checked={value ?? false}
                 onCheckedChange={onChange}
                 {...props}
               />

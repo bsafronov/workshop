@@ -24,6 +24,7 @@ import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useModal } from "../modal";
 import { toast } from "sonner";
+import { FormCheckbox } from "../form/checkbox";
 
 export const ColumnForm = ({ tableId }: { tableId: string }) => {
   const form = useForm({
@@ -38,11 +39,13 @@ export const ColumnForm = ({ tableId }: { tableId: string }) => {
   const trpc = useTRPC();
   const qc = useQueryClient();
   const { toggle } = useModal();
+  const selectedType = form.watch("type");
+
   const { mutate, isPending } = useMutation(
     trpc.table.createColumn.mutationOptions({
       onSuccess: async () => {
         await qc.invalidateQueries(
-          trpc.table.getTable.queryFilter({ tableId })
+          trpc.table.getColumns.queryFilter({ tableId })
         );
         toggle();
       },
@@ -53,7 +56,15 @@ export const ColumnForm = ({ tableId }: { tableId: string }) => {
   return (
     <FormController
       form={form}
-      onSubmit={form.handleSubmit((data) => mutate(data))}
+      onSubmit={form.handleSubmit((data) => {
+        const { type } = data;
+
+        if (type === "boolean") {
+          data.required = false;
+        }
+
+        mutate(data);
+      })}
       isLoading={isPending}
     >
       <FormInput control={form.control} name="name" label="Название" required />
@@ -84,6 +95,13 @@ export const ColumnForm = ({ tableId }: { tableId: string }) => {
           </FormItem>
         )}
       />
+      {selectedType !== "boolean" && (
+        <FormCheckbox
+          control={form.control}
+          name="required"
+          label="Обязательное поле"
+        />
+      )}
     </FormController>
   );
 };

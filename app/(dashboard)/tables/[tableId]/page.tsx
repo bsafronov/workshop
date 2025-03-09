@@ -1,7 +1,7 @@
 import { Loader } from "@/components/ui/loader";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { Suspense } from "react";
-import { TableInfo } from "./table-info";
+import { Client } from "./client";
 
 type Props = {
   params: Promise<{ tableId: string }>;
@@ -13,7 +13,7 @@ export default async function Page({ params }: Props) {
   return (
     <HydrateClient>
       <Suspense fallback={<Loader />}>
-        <TableInfo />
+        <Client />
       </Suspense>
     </HydrateClient>
   );

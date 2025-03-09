@@ -17,7 +17,7 @@ export const tableRouter = createTRPCRouter({
       .insert(tablesTable)
       .values({
         createdById: ctx.user.id,
-        name: input.name,
+        ...input,
       })
       .returning();
 
@@ -40,13 +40,29 @@ export const tableRouter = createTRPCRouter({
     .mutation(async (opts) => {
       const { ctx, input } = opts;
 
+      const table = await ctx.db.query.tablesTable.findFirst({
+        where: eq(tablesTable.id, input.tableId),
+      });
+
+      if (!table) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      const canCreate = table.createdById === ctx.user.id;
+
+      if (!canCreate) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+
       const [column] = await ctx.db
         .insert(columnsTable)
         .values({
-          tableId: input.tableId,
           createdById: ctx.user.id,
-          type: input.type,
-          name: input.name,
+          ...input,
         })
         .returning();
 
@@ -96,6 +112,20 @@ export const tableRouter = createTRPCRouter({
 
       return ctx.db.query.rowsTable.findMany({
         where: eq(rowsTable.tableId, input.tableId),
+        with: {
+          createdBy: {
+            columns: {
+              id: true,
+              username: true,
+            },
+          },
+          updatedBy: {
+            columns: {
+              id: true,
+              username: true,
+            },
+          },
+        },
       });
     }),
   createRow: authProcedure.input(rowInsertSchema).mutation(async (opts) => {
@@ -130,4 +160,106 @@ export const tableRouter = createTRPCRouter({
 
     return row;
   }),
+  deleteTable: authProcedure
+    .input(
+      z.object({
+        tableId: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const { ctx, input } = opts;
+
+      const table = await ctx.db.query.tablesTable.findFirst({
+        where: eq(tablesTable.id, input.tableId),
+      });
+
+      if (!table) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      const canDelete = table.createdById === ctx.user.id;
+
+      if (!canDelete) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+
+      const [deletedTable] = await ctx.db
+        .delete(tablesTable)
+        .where(eq(tablesTable.id, input.tableId))
+        .returning();
+
+      return deletedTable;
+    }),
+  deleteColumn: authProcedure
+    .input(
+      z.object({
+        columnId: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const { ctx, input } = opts;
+
+      const column = await ctx.db.query.columnsTable.findFirst({
+        where: eq(tablesTable.id, input.columnId),
+      });
+
+      if (!column) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      const canDelete = column.createdById === ctx.user.id;
+
+      if (!canDelete) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+
+      const [deletedColumn] = await ctx.db
+        .delete(tablesTable)
+        .where(eq(tablesTable.id, input.columnId))
+        .returning();
+
+      return deletedColumn;
+    }),
+  deleteRow: authProcedure
+    .input(
+      z.object({
+        rowId: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const { ctx, input } = opts;
+
+      const row = await ctx.db.query.rowsTable.findFirst({
+        where: eq(rowsTable.id, input.rowId),
+      });
+
+      if (!row) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      const canDelete = row.createdById === ctx.user.id;
+
+      if (!canDelete) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+
+      const [deletedRow] = await ctx.db
+        .delete(rowsTable)
+        .where(eq(rowsTable.id, input.rowId))
+        .returning();
+
+      return deletedRow;
+    }),
 });

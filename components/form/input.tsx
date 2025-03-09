@@ -21,11 +21,11 @@ export const FormInput: FormElement<typeof Input> = ({
     <FormField
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field: { value, ...field } }) => (
         <FormItem>
           <FormLabel data-required={required}>{label}</FormLabel>
           <FormControl>
-            <Input {...field} {...props} />
+            <Input value={value ?? ""} {...field} {...props} />
           </FormControl>
           <FormDescription>{description}</FormDescription>
           <FormMessage />
