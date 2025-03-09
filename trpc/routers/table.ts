@@ -103,6 +103,20 @@ export const tableRouter = createTRPCRouter({
 
       return ctx.db.query.columnsTable.findMany({
         where: eq(columnsTable.tableId, input.tableId),
+        with: {
+          createdBy: {
+            columns: {
+              id: true,
+              username: true,
+            },
+          },
+          updatedBy: {
+            columns: {
+              id: true,
+              username: true,
+            },
+          },
+        },
       });
     }),
   getRows: baseProcedure

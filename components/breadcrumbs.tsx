@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 const breadcrumbNamesMap: Record<string, string> = {
   tables: "Таблицы",
   settings: "Настройки",
+  columns: "Столбцы",
 };
 
 export const Breadcrumbs = () => {

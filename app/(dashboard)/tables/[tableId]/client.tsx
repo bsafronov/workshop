@@ -5,13 +5,14 @@ import { DynamicDataTable } from "@/components/data-table";
 import { ColumnForm } from "@/components/forms/column";
 import { RowForm } from "@/components/forms/row";
 import { Modal } from "@/components/modal";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useTRPC } from "@/trpc/client";
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -46,6 +47,9 @@ export const Client = () => {
         <Modal title="Новая запись" trigger={<Button>Добавить запись</Button>}>
           <RowForm tableId={table.id} />
         </Modal>
+        <Link className={buttonVariants()} href={`/tables/${table.id}/columns`}>
+          Столбцы
+        </Link>
         <Confirm onSubmit={() => mutate({ tableId })}>
           <Button isLoading={isPending} variant={"destructive"}>
             Удалить таблицу

@@ -6,7 +6,7 @@ type Props = {
 };
 export default async function Page({ params }: Props) {
   const { tableId } = await params;
-  prefetch(trpc.table.getTable.queryOptions({ tableId }));
+  prefetch(trpc.table.getColumns.queryOptions({ tableId }));
 
   return (
     <HydrateClient>
